@@ -1,0 +1,23 @@
+---
+title: "Cluster Analysis of Categorical Data"
+author: "Xiaoyi Ma and Robert Long"
+date: "4/14/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+# Previously...
+- Clusters clearly defined (subject $i$)
+- Explanatory vs outcome also clearly defined
+- Euclidean distances mostly make sense
+
+
+# Now...
+- Identify the clusters
+- Explanatory vs outcome not necessarily clear
+- Differance measurements between categorical variables 
