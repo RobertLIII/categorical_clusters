@@ -19,5 +19,21 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Now...
 - Identify the clusters
+  - $k$ clusters
+  - The data decides
 - Explanatory vs outcome not necessarily clear
-- Difference measurements between categorical variables 
+- Difference measurements between categorical variables (dummy variables)
+  - $p$ binary variables
+  
+  
+# New slide
+
+# Code Chunk - New Slide
+```{r code_chunk, results='markup'}
+# write function/R code here
+# code_chunk is a unique name for the code_chunk; so change it to make clear like a comment
+# if you do not want the results posted onto a slide, change to results="hide"
+# in-text code can be written like `r function()` using the function name instead of function()
+```
+
+
