@@ -20,4 +20,4 @@ knitr::opts_chunk$set(echo = FALSE)
 # Now...
 - Identify the clusters
 - Explanatory vs outcome not necessarily clear
-- Differance measurements between categorical variables 
+- Difference measurements between categorical variables 
