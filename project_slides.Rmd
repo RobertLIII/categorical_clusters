@@ -29,8 +29,12 @@ unloadPkg = function(pkg, character.only = FALSE) {
 ```
 
 
-```{r load_libraries}
+```{r load_libraries, include=F}
 loadPkg("MASS")
+loadPkg("klaR")
+loadPkg("cba")
+loadPkg("factoextra")
+loadPkg("cluster")
 ```
 
 # Previously...
@@ -47,6 +51,25 @@ loadPkg("MASS")
 - Difference measurements between categorical variables (dummy variables)
   - $p$ binary variables
   
+ 
+ 
+```{r load_data}
+data <- read.csv("mushrooms.csv")
+
+data[sapply(data, is.character)] <- lapply(data[sapply(data, is.character)], as.factor)
+
+str(data)
+
+data <- subset(data, select=-c(veil.type))
+```
+ 
+```{r dissim}
+data.dist <- daisy(data, metric="gower")
+
+fviz_dist(data.dist, 
+   gradient=list(low = "steelblue",  high = "white"),
+   order=T)
+```
   
 # New slide
 
@@ -60,7 +83,11 @@ loadPkg("MASS")
 
 
 
-```{r unload_libraries}
+```{r unload_libraries, include=F}
 unloadPkg(MASS)
+unloadPkg(klaR)
+unloadPkg(cba)
+unloadPkg(factoextra)
+unloadPkg(cluster)
 ```
 
