@@ -30,6 +30,8 @@ unloadPkg = function(pkg, character.only = FALSE) {
 
 
 ```{r load_libraries, include=F}
+set.seed(17)
+
 loadPkg("MASS")
 loadPkg("klaR")
 loadPkg("cba")
@@ -60,17 +62,34 @@ data[sapply(data, is.character)] <- lapply(data[sapply(data, is.character)], as.
 
 str(data)
 
-data <- subset(data, select=-c(veil.type))
+x.data <- subset(data, select=-c(veil.type, class))
 ```
  
+
+# Dissimilarity Matrix
+
 ```{r dissim}
-data.dist <- daisy(data, metric="gower")
+data.dist <- daisy(x.data, metric="gower")
 
 fviz_dist(data.dist, 
    gradient=list(low = "steelblue",  high = "white"),
-   order=T)
+   order=T, show_labels=F)
 ```
-  
+
+# k-means Clustering
+
+```{r kmeans}
+data.matrix <- model.matrix(~.-1, data=x.data)
+
+result.kmean = kmeans(data.matrix, 2, nstart = 50, iter.max = 15) 
+
+result.kmean.mm <- table(data$class, result.kmean$cluster)
+purity.kmean <- sum(apply(result.kmean.mm, 2, max)) / nrow(x.data)
+purity.kmean
+
+```
+
+
 # New slide
 
 # Code Chunk - New Slide
