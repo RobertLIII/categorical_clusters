@@ -39,21 +39,7 @@ loadPkg("factoextra")
 loadPkg("cluster")
 ```
 
-# Previously...
-- Clusters clearly defined (subject $i$)
-- Explanatory vs outcome also clearly defined
-- Euclidean distances mostly make sense
 
-
-# Now...
-- Identify the clusters
-  - $k$ clusters
-  - The data decides
-- Explanatory vs outcome not necessarily clear
-- Difference measurements between categorical variables (dummy variables)
-  - $p$ binary variables
-  
- 
  
 ```{r load_data}
 data <- read.csv("mushrooms.csv")
