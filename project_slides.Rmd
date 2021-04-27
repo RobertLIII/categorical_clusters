@@ -2,11 +2,20 @@
 title: "Cluster Analysis of Categorical Data"
 author: "Xiaoyi Ma and Robert Long"
 date: "4/14/2021"
-output: ioslides_presentation
+output:
+  html_document:
+    code_folding: hide
+    number_sections: true
+    toc: yes
+    toc_depth: 1
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 1
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(warning = F, results = "markup", message = F, echo = T)
 ```
 
 
@@ -32,6 +41,7 @@ unloadPkg = function(pkg, character.only = FALSE) {
 ```{r load_libraries, include=F}
 set.seed(17)
 
+loadPkg("ggplot2")
 loadPkg("MASS")
 loadPkg("klaR")
 loadPkg("cba")
@@ -50,49 +60,106 @@ str(data)
 
 x.data <- subset(data, select=-c(veil.type, class))
 ```
- 
 
-# Dissimilarity Matrix
+# Distance Matrix 
+```{r diss}
+samps <- sample(8124, 500)
 
-```{r dissim}
-data.dist <- daisy(x.data, metric="gower")
+data.dist <- daisy(x.data[samps,], metric="gower")
 
+gradient.color <- list(low = "steelblue",  high = "white")
 fviz_dist(data.dist, 
-   gradient=list(low = "steelblue",  high = "white"),
-   order=T, show_labels=F)
+   gradient = gradient.color,
+   order=F,
+   show_labels=F)
+
 ```
+
+# Ordered Distance Matrix
+```{r diss_ord}
+gradient.color <- list(low = "steelblue",  high = "white")
+fviz_dist(data.dist, 
+   gradient = gradient.color,
+   order=T,
+   show_labels=F)
+
+```
+
 
 # k-means Clustering
 
-```{r kmeans}
+```{r kmeans, results='markup'}
 data.matrix <- model.matrix(~.-1, data=x.data)
 
-result.kmean = kmeans(data.matrix, 2, nstart = 50, iter.max = 15) 
+fit.kmean = kmeans(data.matrix, 2, iter.max = 15) 
 
-result.kmean.mm <- table(data$class, result.kmean$cluster)
+result.kmean.mm <- table(data$class, fit.kmean$cluster)
+result.kmean.mm
+
 purity.kmean <- sum(apply(result.kmean.mm, 2, max)) / nrow(x.data)
-purity.kmean
 
+fviz_cluster(fit.kmean, data.matrix, repel=T)
 ```
 
+Purity: `r purity.kmean`
 
-# New slide
 
-# Code Chunk - New Slide
-```{r code_chunk, results='markup'}
-# write function/R code here
-# code_chunk is a unique name for the code_chunk; so change it to make clear like a comment
-# if you do not want the results posted onto a slide, change to results="hide"
-# in-text code can be written like `r function()` using the function name instead of function()
+# PAM
+
+```{r pam, results="markup"}
+
+fit.pam <- pam(data.matrix, 2)
+
+result.pam.mm <- table(data$class, fit.pam$clustering)
+result.pam.mm
+
+purity.pam <- sum(apply(result.pam.mm, 2, max)) / nrow(x.data)
+
+fviz_cluster(fit.pam, repel=T)
+```
+
+Purity: `r purity.pam`
+
+
+## PAM: MDS and Clusters
+
+```{r pam_mds, results='markup'}
+pam.mds <- as.data.frame(cmdscale(data.dist,2))
+
+pam.mds$cluster <- as.factor(fit.pam$clustering[samps])
+
+ggplot(pam.mds,
+       aes(x=V1, y=V2, color=cluster)) + 
+  geom_point() + 
+  labs(title="MDS Plot for Mushroom Clusters",
+       subtitle="Colored by PAM cluster") +
+  scale_color_brewer(palette="Set1")
+```
+
+# PAM Results
+```{r vars_by_cluster, results='markup'}
+
+pam.cluster <- fit.pam$clustering
+
+data.fused <- cbind(data, pam.cluster)
+
+ggplot(data.fused) +
+  geom_bar(aes(x=cap.shape, fill=factor(pam.cluster)), position="dodge") + 
+  xlab("Cap Shape") +
+  ylab("Count") 
+  
+
 ```
 
 
 
 ```{r unload_libraries, include=F}
-unloadPkg(MASS)
+
 unloadPkg(klaR)
 unloadPkg(cba)
 unloadPkg(factoextra)
 unloadPkg(cluster)
+unloadPkg(MASS)
+unloadPkg(ggplot2)
 ```
 
