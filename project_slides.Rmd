@@ -3,15 +3,15 @@ title: "Cluster Analysis of Categorical Data"
 author: "Xiaoyi Ma and Robert Long"
 date: "4/14/2021"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 1
   html_document:
     code_folding: hide
     number_sections: true
     toc: yes
     toc_depth: 1
     toc_float: yes
-  pdf_document:
-    toc: yes
-    toc_depth: 1
 ---
 
 ```{r setup, include=FALSE}
@@ -139,7 +139,7 @@ fviz_cluster(fit.pam, repel=T)
 Purity: `r purity.pam`
 
 # PAM with Raw Data
-```{r pam, results="markup"}
+```{r pam_raw, results="markup"}
 
 fit.pam_raw <- pam(x.data, 2)
 
@@ -153,7 +153,7 @@ fviz_cluster(fit.pam_raw, repel=T)
 Purity: `r purity.pam_raw`
 
 # PAM with Gower 
-```{r pam, results="markup"}
+```{r pam_g, results="markup"}
 fit.pam_g <- pam(data.dist, 2)
 
 result.pam_g.mm <- table(data[samps, ]$class, fit.pam_g$clustering)
@@ -167,7 +167,7 @@ Purity: `r purity.pam_g`
 
 ## PAM with Gower: MDS and Clusters
 
-```{r pam_mds, results='markup'}
+```{r pam_mds_g, results='markup'}
 pam.mds <- as.data.frame(cmdscale(data.dist,2))
 
 pam.mds$cluster <- as.factor(fit.pam_g$clustering)
@@ -182,10 +182,10 @@ ggplot(pam.mds,
 
 ## PAM with Raw Data: MDS and Clusters
 
-```{r pam_mds, results='markup'}
+```{r pam_mds_raw, results='markup'}
 pam.mds <- as.data.frame(cmdscale(data.dist,2))
 
-pam.mds$cluster <- as.factor(fit.pam$clustering[samps])
+pam.mds$cluster <- as.factor(fit.pam_raw$clustering[samps])
 
 ggplot(pam.mds,
        aes(x=V1, y=V2, color=cluster)) + 
@@ -196,6 +196,7 @@ ggplot(pam.mds,
 ```
 
 # PAM Results
+
 ```{r vars_by_cluster, results='markup'}
 
 pam.cluster <- fit.pam$clustering
