@@ -86,7 +86,7 @@ fviz_dist(data.dist,
 ```
 
 
-# k-means Clustering
+# k-means Clustering by One-Hot
 
 ```{r kmeans, results='markup'}
 data.matrix <- model.matrix(~.-1, data=x.data)
@@ -104,7 +104,25 @@ fviz_cluster(fit.kmean, data.matrix, repel=T)
 Purity: `r purity.kmean`
 
 
-# PAM
+
+
+# k-means Clustering by Gower
+
+```{r kmeans_gower, results='markup'}
+
+fit.kmean_gower = kmeans(data.dist, 2) 
+
+result.kmean_gower <- table(data[samps, ]$class, fit.kmean_gower$cluster)
+result.kmean_gower
+
+purity.kmean_gower <- sum(apply(result.kmean_gower, 2, max)) / 500
+
+fviz_cluster(fit.kmean_gower, data.dist,  repel=T)
+```
+Purity: `r purity.kmean_gower`
+
+
+# PAM with One-Hot
 
 ```{r pam, results="markup"}
 
@@ -113,15 +131,56 @@ fit.pam <- pam(data.matrix, 2)
 result.pam.mm <- table(data$class, fit.pam$clustering)
 result.pam.mm
 
-purity.pam <- sum(apply(result.pam.mm, 2, max)) / nrow(x.data)
+purity.pam <- sum(apply(result.pam.mm, 2, max)) / 8124
 
 fviz_cluster(fit.pam, repel=T)
 ```
 
 Purity: `r purity.pam`
 
+# PAM with Raw Data
+```{r pam, results="markup"}
 
-## PAM: MDS and Clusters
+fit.pam_raw <- pam(x.data, 2)
+
+result.pam_raw.mm <- table(data$class, fit.pam_raw$clustering)
+result.pam_raw.mm
+
+purity.pam_raw <- sum(apply(result.pam_raw.mm, 2, max)) / 8124
+  
+fviz_cluster(fit.pam_raw, repel=T)
+```
+Purity: `r purity.pam_raw`
+
+# PAM with Gower 
+```{r pam, results="markup"}
+fit.pam_g <- pam(data.dist, 2)
+
+result.pam_g.mm <- table(data[samps, ]$class, fit.pam_g$clustering)
+result.pam_g.mm
+
+purity.pam_g <- sum(apply(result.pam_g.mm, 2, max)) / 500
+
+```
+
+Purity: `r purity.pam_g`
+
+## PAM with Gower: MDS and Clusters
+
+```{r pam_mds, results='markup'}
+pam.mds <- as.data.frame(cmdscale(data.dist,2))
+
+pam.mds$cluster <- as.factor(fit.pam_g$clustering)
+
+ggplot(pam.mds,
+       aes(x=V1, y=V2, color=cluster)) + 
+  geom_point() + 
+  labs(title="MDS Plot for Mushroom Clusters",
+       subtitle="Colored by PAM cluster") +
+  scale_color_brewer(palette="Set1")
+```
+
+## PAM with Raw Data: MDS and Clusters
 
 ```{r pam_mds, results='markup'}
 pam.mds <- as.data.frame(cmdscale(data.dist,2))
